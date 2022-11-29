@@ -20,6 +20,10 @@ public class Evento {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	@Override
+	public String toString() {
+		return "Evento [nome=" + nome + ", local=" + local + ", data=" + data + ", horario=" + horario + "]";
+	}
 	public String getLocal() {
 		return local;
 	}
