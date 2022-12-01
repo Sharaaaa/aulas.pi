@@ -10,6 +10,6 @@ public class IndexController {
 	public String index() {
 		
 		System.out.println("Método Index");
-		return "home"; 
+		return "redirect:/eventos"; 
 	}
 }
