@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import ifrn.pi.eventos.models.Convidado;
 import ifrn.pi.eventos.models.Evento;
+import ifrn.pi.eventos.repositories.ConvidadoRepository;
 import ifrn.pi.eventos.repositories.EventoRepository;
 import net.bytebuddy.dynamic.DynamicType.Builder.FieldDefinition.Optional;
 
@@ -20,6 +22,8 @@ public class EventosController {
 
 	@Autowired
 	private EventoRepository er;
+	@Autowired
+	private ConvidadoRepository cr;
 
 	@GetMapping("/form")
 	public String form() {
@@ -40,28 +44,47 @@ public class EventosController {
 	public ModelAndView listar() {
 		List<Evento> eventos = er.findAll();
 		ModelAndView mv = new ModelAndView("eventos/lista");
-	    mv.addObject("eventos", eventos);
-	    return mv;
-	    
+		mv.addObject("eventos", eventos);
+		return mv;
+
 	}
-	
+
 	@GetMapping("/{id}")
 	public ModelAndView detalhar(@PathVariable Long id) {
-		
-		Optional<Evento> opt = er.findById(id); 
-		if(opt.isEmpty()) {
-			ModelAndView md = new ModelAndView("redirect:/listar");
+			ModelAndView md = new ModelAndView();
+			Optional<Evento> opt = er.findById(Id);
+			
+			if (opt.isEmpty()) {
 			md.setViewName("redirect:/eventos");
 			return md;
-	
+
 		}
-		
+
 		md.setViewName("eventos/detalhes");
 		Evento evento = opt.get();
-		
 		md.addObject("evento", evento);
-		
+
+		List<Convidado> convidados =cr.findByEvento(evento);
+		md.addObject("Convidados", convidados);
 		return md;
 	}
-	
+
+	@PostMapping("/{idEvento}")
+	public String savarConvidado(@PathVariable Long IdEvento, Convidado convidado) {
+   
+	      System.out.println("Id do evento:" + IdEvento);
+	      System.out.println(convidado);
+	      
+	      Optional<Evento> opt = er.findById(IdEvento);
+	      if(opt.isEmpty)) {
+	    	  return "redirect:/eventos";
+	      }
+	      
+	      Evento evento = opt.get();
+	      convidado.setEvento(evento);
+	      
+	      cr.save(convidado);
+	       
+		    return "redirect:/eventos/{idEvento}";
+	}
 }
